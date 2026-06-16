@@ -342,37 +342,45 @@ body{font-family:'Inter',sans-serif;background:var(--OFF);color:var(--T);min-hei
 
 @media(max-width:880px){.fp{width:340px}.prog{display:none}}
 
+/* ═══════════ MOBILE ═══════════ */
+@media(max-width:640px){
+  #app{height:auto;min-height:100vh;overflow-y:auto}
+  .main{flex-direction:column;overflow:visible;height:auto}
+  .fp{width:100%;height:auto;overflow:visible;border-right:none;border-bottom:1px solid var(--GL)}
+  .fpbody{overflow:visible;padding-bottom:20px;max-height:none}
+  .fpnav{position:sticky;bottom:0;z-index:20}
+  .prev-panel{display:none}
+  .prog{display:none}
+  .topbar{position:sticky;top:0;z-index:40}
+}
+
 /* ═══════════ PRINT ═══════════ */
 @media print {
   @page { size: A4; margin: 0; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body { background: white !important; margin: 0 !important; }
 
-  body { background: white !important; }
-
-  /* Sembunyikan semua kecuali CV */
-  #landing, #app > *:not(#cvScaler),
-  #formPanel, #navbar, #stepNav,
+  #landing, .topbar, .fp, .fpnav,
   #tourOverlay, .toast, .fab,
-  #app { display: none !important; }
+  .prev-panel { display: none !important; }
 
-  /* Tampilkan hanya CV page */
+  #app { display: block !important; height: auto !important; }
+  .main { display: block !important; }
+
   #cvScaler {
     display: block !important;
-    position: fixed !important;
-    top: 0 !important; left: 0 !important;
+    position: static !important;
     width: 210mm !important;
     height: auto !important;
     transform: none !important;
+    margin: 0 !important;
   }
-
   #cvPage {
-    display: block !important;
     width: 210mm !important;
     min-height: 297mm !important;
     transform: none !important;
     box-shadow: none !important;
-    page-break-after: always;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    margin: 0 !important;
   }
 }
 </style>
@@ -1211,7 +1219,16 @@ function downloadPDF() {
   saveStep();
   updH(); updSum(); updSks(); updLns(); updExps(); updEdus(); updCos(); updIns();
   closeTour();
+
+  // Pastikan preview panel visible saat print (untuk mobile yang disembunyikan)
+  const prevPanel = document.querySelector('.prev-panel');
+  const wasMobileHidden = prevPanel && getComputedStyle(prevPanel).display === 'none';
+  if (wasMobileHidden) prevPanel.style.display = 'flex';
+
   window.print();
+
+  // Kembalikan setelah print dialog tutup
+  if (wasMobileHidden) prevPanel.style.display = '';
 }
 </script>
 </body>
