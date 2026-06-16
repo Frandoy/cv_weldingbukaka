@@ -341,6 +341,40 @@ body{font-family:'Inter',sans-serif;background:var(--OFF);color:var(--T);min-hei
 @keyframes spotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.04)}}
 
 @media(max-width:880px){.fp{width:340px}.prog{display:none}}
+
+/* ═══════════ PRINT ═══════════ */
+@media print {
+  @page { size: A4; margin: 0; }
+
+  body { background: white !important; }
+
+  /* Sembunyikan semua kecuali CV */
+  #landing, #app > *:not(#cvScaler),
+  #formPanel, #navbar, #stepNav,
+  #tourOverlay, .toast, .fab,
+  #app { display: none !important; }
+
+  /* Tampilkan hanya CV page */
+  #cvScaler {
+    display: block !important;
+    position: fixed !important;
+    top: 0 !important; left: 0 !important;
+    width: 210mm !important;
+    height: auto !important;
+    transform: none !important;
+  }
+
+  #cvPage {
+    display: block !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    transform: none !important;
+    box-shadow: none !important;
+    page-break-after: always;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -1177,37 +1211,7 @@ function downloadPDF() {
   saveStep();
   updH(); updSum(); updSks(); updLns(); updExps(); updEdus(); updCos(); updIns();
   closeTour();
-
-  const btn = document.getElementById('dlBtn');
-  btn.disabled  = true;
-  btn.textContent = '⏳ Membuka print...';
-
-  setTimeout(() => {
-    printCV();
-    btn.disabled  = false;
-    btn.innerHTML = `<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Download PDF`;
-  }, 300);
-}
-
-// ──────────────── PRINT FALLBACK ────────────────
-function printCV() {
-  const cvPage = document.getElementById('cvPage');
-  const win    = window.open('', '_blank', 'width=900,height=1100');
-  win.document.write(`<!DOCTYPE html>
-<html><head>
-<meta charset="UTF-8">
-<title>CV - ${cv.name || 'saya'}</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  @page { size: A4; margin: 0; }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-</style>
-</head><body>
-${cvPage.outerHTML}
-<script>window.onload=function(){window.print();window.onafterprint=function(){window.close()};}<\/script>
-</body></html>`);
-  win.document.close();
+  window.print();
 }
 </script>
 </body>
